@@ -51,10 +51,10 @@ function AppContent() {
     <SidebarProvider defaultOpen={false}>
       <div className="flex min-h-screen w-full">
         {getSidebar()}
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
           <MobileSidebarTrigger />
           <TopNotificationBar />
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto relative">
             <Routes>
               {/* Student Routes */}
               <Route path="/" element={<Home />} />

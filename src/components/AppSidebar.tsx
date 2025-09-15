@@ -33,11 +33,17 @@ const navigationItems = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, setOpenMobile } = useSidebar();
   const location = useLocation();
   const isMobile = useIsMobile();
   const currentPath = location.pathname;
   const isCollapsed = state === "collapsed" && !isMobile;
+
+  const handleNavClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   const isActive = (path: string) => currentPath === path;
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
@@ -85,6 +91,7 @@ export function AppSidebar() {
                      <NavLink 
                       to={item.url} 
                       end 
+                      onClick={handleNavClick}
                       className={({ isActive }) => `
                         flex items-center gap-3 p-3 transition-all duration-300
                         ${getNavCls({ isActive })}
