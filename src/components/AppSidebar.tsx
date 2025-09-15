@@ -33,18 +33,19 @@ const navigationItems = [
 ];
 
 export function AppSidebar() {
-  const { state, setOpenMobile } = useSidebar();
+  const { state, setOpenMobile, setOpen } = useSidebar();
   const location = useLocation();
   const isMobile = useIsMobile();
   const currentPath = location.pathname;
   const isCollapsed = state === "collapsed" && !isMobile;
 
   const handleNavClick = () => {
+    console.log("Nav clicked, isMobile:", isMobile, "current state:", state);
     if (isMobile) {
       setOpenMobile(false);
     } else {
-      // Close sidebar on desktop too
-      setOpenMobile(false);
+      // For desktop, close the sidebar completely
+      setOpen(false);
     }
   };
 
