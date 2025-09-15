@@ -42,6 +42,9 @@ export function AppSidebar() {
   const handleNavClick = () => {
     if (isMobile) {
       setOpenMobile(false);
+    } else {
+      // Close sidebar on desktop too
+      setOpenMobile(false);
     }
   };
 
