@@ -14,6 +14,7 @@ import { MobileSidebarTrigger } from "@/components/ui/mobile-trigger";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Assessment from "./pages/Assessment";
+import VideoAnalysis from "./pages/VideoAnalysis";
 import Challenges from "./pages/Challenges";
 import Leaderboard from "./pages/Leaderboard";
 import Roadmap from "./pages/Roadmap";
@@ -60,6 +61,7 @@ function AppContent() {
               <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/assessment" element={<Assessment />} />
+              <Route path="/video-analysis" element={<VideoAnalysis />} />
               <Route path="/challenges" element={<Challenges />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/roadmap" element={<Roadmap />} />

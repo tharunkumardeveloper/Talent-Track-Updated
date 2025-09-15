@@ -152,7 +152,14 @@ export default function Assessment() {
   };
 
   const handleAnalysisComplete = () => {
-    setUploadPhase('results');
+    // Navigate to the new video analysis page instead of showing results
+    navigate('/video-analysis', {
+      state: {
+        videoFile: uploadedFile,
+        activityName: selectedActivity.name,
+        activityId: selectedActivity.id
+      }
+    });
   };
 
   const handleViewRewards = () => {
