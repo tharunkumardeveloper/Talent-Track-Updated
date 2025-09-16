@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowUp, Timer, Dumbbell, Heart, Upload, Camera, CheckCircle2, Clock, Zap, Trophy, TrendingUp, Medal, Coins, BarChart3, Target, Flame, Video, Play } from "lucide-react";
+import { ArrowUp, Timer, Dumbbell, Heart, Upload, Camera, CheckCircle2, Clock, Zap, Trophy, TrendingUp, Medal, Coins, BarChart3, Target, Flame, Video, Play, Hand } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
