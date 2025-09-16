@@ -40,20 +40,6 @@ const adaptiveExercises = [
     subtitles: "Set up assistance properly • Control the movement • Use support as needed • Focus on form"
   },
   {
-    id: "resistance-band-arm",
-    name: "Resistance Band Arm Test",
-    emoji: "🎯",
-    icon: Hand,
-    description: "Measure upper body strength using resistance bands",
-    duration: "3 minutes",
-    difficulty: "Intermediate",
-    color: "text-gamification-silver",
-    instructions: "Hold resistance band with both hands at chest level. Pull band apart by moving arms outward, engaging shoulder and back muscles. Return to starting position with control.",
-    modifications: ["Choose appropriate resistance level", "Use single arm if needed", "Adjust grip for comfort"],
-    benefits: ["Shoulder strength", "Back muscle development", "Grip strength"],
-    subtitles: "Hold band at chest level • Pull apart smoothly • Control the return • Maintain posture"
-  },
-  {
     id: "seated-push-up",
     name: "Seated Push-Up",
     emoji: "💺",

@@ -64,18 +64,6 @@ const activities = [
     videoTips: "Position camera at side angle • Frame full body • Capture full range of motion • Ensure proper lighting"
   },
   {
-    id: "endurance-run",
-    name: "Endurance Run",
-    emoji: "🏃‍♀️",
-    icon: Heart,
-    description: "Measure cardiovascular fitness and stamina levels",
-    duration: "12 minutes",
-    difficulty: "Advanced",
-    color: "text-primary",
-    instructions: "Run at steady pace for 12 minutes, covering as much distance as possible. Maintain consistent effort throughout. Walk if needed but try to minimize walking time.",
-    videoTips: "Use front-facing camera • Capture running path • Record pace and form • Stable recording essential"
-  },
-  {
     id: "pull-ups",
     name: "Pull-Ups",
     emoji: "🏋️‍♂️",
@@ -87,66 +75,6 @@ const activities = [
     instructions: "Hang from pull-up bar with arms fully extended. Pull your body up until chin clears the bar, then lower back down with control. Keep body straight throughout movement.",
     videoTips: "Position camera to capture full body • Show complete range of motion • Ensure bar is visible • Record from side angle"
   },
-  {
-    id: "knee-pushups",
-    name: "Knee Push-Ups",
-    emoji: "🧎‍♀️",
-    icon: Hand,
-    description: "Modified push-up exercise for building upper body strength",
-    duration: "2 minutes",
-    difficulty: "Beginner",
-    color: "text-gamification-bronze",
-    instructions: "Start in modified plank position with knees on ground. Lower chest toward ground, then push back up. Keep straight line from knees to head throughout movement.",
-    videoTips: "Position camera at side angle • Frame upper body and knees • Show full range of motion • Ensure stable surface"
-  },
-  {
-    id: "assisted-chin-dip",
-    name: "Assisted Chin & Dip",
-    emoji: "🤝",
-    icon: Dumbbell,
-    description: "Upper body strength with assistance for adaptive athletes",
-    duration: "3 minutes",
-    difficulty: "Intermediate",
-    color: "text-gamification-silver",
-    instructions: "Use assistance bands or support to perform chin-ups and dips. Focus on controlled movement and proper form. Adjust assistance level as needed.",
-    videoTips: "Position camera to capture full movement • Show assistance setup • Record full range of motion • Clear lighting"
-  },
-  {
-    id: "resistance-band-arm",
-    name: "Resistance Band Arm Test",
-    emoji: "🎯",
-    icon: Hand,
-    description: "Measure upper body strength using resistance bands",
-    duration: "3 minutes",
-    difficulty: "Intermediate",
-    color: "text-gamification-silver",
-    instructions: "Hold resistance band with both hands at chest level. Pull band apart by moving arms outward, engaging shoulder and back muscles. Return to starting position with control.",
-    videoTips: "Position camera to side view • Show band tension • Capture full arm movement • Stable recording"
-  },
-  {
-    id: "seated-push-up",
-    name: "Seated Push-Up",
-    emoji: "💺",
-    icon: Hand,
-    description: "Upper body strength exercise designed for seated athletes",
-    duration: "2 minutes",
-    difficulty: "Beginner",
-    color: "text-gamification-bronze",
-    instructions: "Sit upright in chair. Place hands on armrests or chair sides. Push your body up using arm strength, lifting weight off seat. Lower back down slowly and repeat.",
-    videoTips: "Position camera to capture seated position • Show full push movement • Ensure chair stability • Good lighting"
-  },
-  {
-    id: "modified-shuttle",
-    name: "Modified Shuttle Exercise",
-    emoji: "♿",
-    icon: Car,
-    description: "Agility test adapted for wheelchair users or mobility aids",
-    duration: "5 minutes",
-    difficulty: "Intermediate",
-    color: "text-gamification-gold",
-    instructions: "Navigate between two points 10 feet apart. Move as quickly as safely possible between markers. Focus on smooth turns and consistent speed.",
-    videoTips: "Position camera to capture full path • Show turning technique • Record consistent movement • Clear markers visible"
-  }
 ];
 
 const assessmentHistory = [
