@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, MapPin, Calendar, Camera, Save, X, Settings, Eye, Volume2, Hand, Accessibility, Heart } from "lucide-react";
+import { User, MapPin, Calendar, Camera, Save, X, Settings, Eye, Volume2, Hand, Accessibility, Heart, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -202,10 +202,10 @@ export function ProfileEditModal({ isOpen, onClose, currentProfile, onSave }: Pr
                 type="button"
                 variant="outline"
                 onClick={() => document.getElementById('medical-report-upload')?.click()}
-                className="border-glass-border/30"
+                className={`border-glass-border/30 ${!profile.medicalReport ? 'border-destructive/50 text-destructive' : 'border-success/50 text-success'}`}
               >
                 <Heart className="w-4 h-4 mr-2" />
-                Upload Medical Report
+                {profile.medicalReport ? 'Medical Report Uploaded' : 'Upload Medical Report'}
               </Button>
               <input
                 id="medical-report-upload"
@@ -215,11 +215,20 @@ export function ProfileEditModal({ isOpen, onClose, currentProfile, onSave }: Pr
                 className="hidden"
               />
               {profile.medicalReport && (
-                <span className="text-xs text-success">✓ {profile.medicalReport.name}</span>
+                <div className="flex items-center gap-1">
+                  <CheckCircle2 className="w-4 h-4 text-success" />
+                  <span className="text-xs text-success">{profile.medicalReport.name}</span>
+                </div>
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Upload your medical clearance (PDF or image). Required to access fitness assessments.
+              <strong>Required:</strong> Upload your medical clearance (PDF or image). This is mandatory to access fitness assessments for safety compliance.
+            </p>
+            {!profile.medicalReport && (
+              <div className="flex items-center gap-2 p-2 bg-destructive/10 rounded border border-destructive/20">
+                <AlertTriangle className="w-4 h-4 text-destructive" />
+                <span className="text-xs text-destructive">Medical report is required to proceed</span>
+              </div>
             </p>
           </div>
 

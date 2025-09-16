@@ -28,33 +28,33 @@ const activities = [
     videoTips: "Position camera 6 feet away • Frame full body in view • Ensure good lighting • Jump straight up"
   },
   {
-    id: "shuttle-run", 
+    id: "shuttle-run",
     name: "Shuttle Run",
     emoji: "🏃‍♂️",
     icon: Timer,
     description: "Test your agility, speed, and directional change ability",
     duration: "3 minutes",
-    difficulty: "Intermediate", 
+    difficulty: "Intermediate",
     color: "text-gamification-silver",
     instructions: "Set up two cones 20 yards apart. Sprint to the first cone, touch it, sprint back to start, then continue for the full distance. Focus on quick direction changes.",
     videoTips: "Position camera to capture both cones • Ensure clear side view • Record full sprint path • Good lighting essential"
   },
   {
     id: "sit-ups",
-    name: "Sit-Ups", 
+    name: "Sit-Ups",
     emoji: "🤸‍♀️",
     icon: Dumbbell,
     description: "Evaluate core strength and muscular endurance",
     duration: "1 minute",
     difficulty: "Beginner",
-    color: "text-gamification-bronze", 
+    color: "text-gamification-bronze",
     instructions: "Lie on your back, knees bent, feet flat on ground. Cross arms over chest. Lift shoulders off ground using core muscles, then lower back down. Maintain steady rhythm.",
     videoTips: "Position camera to side view • Frame torso and knees • Stable camera mount • Clear movement visibility"
   },
   {
     id: "push-ups",
     name: "Push-Ups",
-    emoji: "💪", 
+    emoji: "💪",
     icon: Dumbbell,
     description: "Assess upper body strength and endurance capacity",
     duration: "1 minute",
@@ -67,13 +67,61 @@ const activities = [
     id: "endurance-run",
     name: "Endurance Run",
     emoji: "🏃‍♀️",
-    icon: Heart, 
+    icon: Heart,
     description: "Measure cardiovascular fitness and stamina levels",
     duration: "12 minutes",
     difficulty: "Advanced",
     color: "text-primary",
     instructions: "Run at steady pace for 12 minutes, covering as much distance as possible. Maintain consistent effort throughout. Walk if needed but try to minimize walking time.",
     videoTips: "Use front-facing camera • Capture running path • Record pace and form • Stable recording essential"
+  },
+  {
+    id: "assisted-chin-dip",
+    name: "Assisted Chin & Dip",
+    emoji: "🤝",
+    icon: Dumbbell,
+    description: "Upper body strength with assistance for adaptive athletes",
+    duration: "3 minutes",
+    difficulty: "Intermediate",
+    color: "text-gamification-silver",
+    instructions: "Use assistance bands or support to perform chin-ups and dips. Focus on controlled movement and proper form. Adjust assistance level as needed.",
+    videoTips: "Position camera to capture full movement • Show assistance setup • Record full range of motion • Clear lighting"
+  },
+  {
+    id: "resistance-band-arm",
+    name: "Resistance Band Arm Test",
+    emoji: "🎯",
+    icon: Hand,
+    description: "Measure upper body strength using resistance bands",
+    duration: "3 minutes",
+    difficulty: "Intermediate",
+    color: "text-gamification-silver",
+    instructions: "Hold resistance band with both hands at chest level. Pull band apart by moving arms outward, engaging shoulder and back muscles. Return to starting position with control.",
+    videoTips: "Position camera to side view • Show band tension • Capture full arm movement • Stable recording"
+  },
+  {
+    id: "seated-push-up",
+    name: "Seated Push-Up",
+    emoji: "💺",
+    icon: Hand,
+    description: "Upper body strength exercise designed for seated athletes",
+    duration: "2 minutes",
+    difficulty: "Beginner",
+    color: "text-gamification-bronze",
+    instructions: "Sit upright in chair. Place hands on armrests or chair sides. Push your body up using arm strength, lifting weight off seat. Lower back down slowly and repeat.",
+    videoTips: "Position camera to capture seated position • Show full push movement • Ensure chair stability • Good lighting"
+  },
+  {
+    id: "modified-shuttle",
+    name: "Modified Shuttle Exercise",
+    emoji: "♿",
+    icon: Car,
+    description: "Agility test adapted for wheelchair users or mobility aids",
+    duration: "5 minutes",
+    difficulty: "Intermediate",
+    color: "text-gamification-gold",
+    instructions: "Navigate between two points 10 feet apart. Move as quickly as safely possible between markers. Focus on smooth turns and consistent speed.",
+    videoTips: "Position camera to capture full path • Show turning technique • Record consistent movement • Clear markers visible"
   }
 ];
 

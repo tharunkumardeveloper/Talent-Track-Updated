@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Play, Pause, SkipBack, SkipForward, Download, RotateCcw, Zap, Trophy, Coins } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, Download, RotateCcw, Zap, Trophy, Coins, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,19 +7,19 @@ import { Progress } from "@/components/ui/progress";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
-// Sports analysis configuration with filename-based logic
+// Sports analysis configuration with updated categories
 const sportsAnalysis = {
   "vertical-jump": {
     metrics: ["Jump Height", "Takeoff Speed", "Landing Form", "Knee Bend"],
   },
-  "push-ups": {
-    metrics: ["Form Quality", "Rep Count", "Tempo", "Range of Motion"],
+  "shuttle-run": {
+    metrics: ["Agility", "Speed", "Direction Change", "Time"],
   },
   "sit-ups": {
     metrics: ["Core Engagement", "Rep Count", "Form", "Speed"],
   },
-  "shuttle-run": {
-    metrics: ["Agility", "Speed", "Direction Change", "Time"],
+  "push-ups": {
+    metrics: ["Form Quality", "Rep Count", "Tempo", "Range of Motion"],
   },
   "endurance-run": {
     metrics: ["Pace", "Form", "Breathing", "Distance"],
@@ -42,7 +42,7 @@ const sportsAnalysis = {
 const analyzeVideoByFilename = (filename: string, activityId: string) => {
   const firstLetter = filename.toLowerCase().charAt(0);
   const numberMatch = filename.match(/(\d+)$/);
-  const repCount = numberMatch ? parseInt(numberMatch[1]) : 0;
+  const repCount = numberMatch ? parseInt(numberMatch[1]) : Math.floor(Math.random() * 20) + 10;
 
   let postureStatus = "good";
   let postureValue = "Good";
@@ -78,8 +78,12 @@ const analyzeVideoByFilename = (filename: string, activityId: string) => {
   // Generate random stats for other metrics
   const generateRandomStats = () => {
     const statuses = ["excellent", "good", "warning"];
-    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-    return { status: randomStatus };
+    const values = ["Excellent", "Good", "Needs Work"];
+    const randomIndex = Math.floor(Math.random() * statuses.length);
+    return { 
+      status: statuses[randomIndex],
+      value: values[randomIndex]
+    };
   };
 
   const currentAnalysis = sportsAnalysis[activityId as keyof typeof sportsAnalysis];
@@ -103,7 +107,7 @@ const analyzeVideoByFilename = (filename: string, activityId: string) => {
     } else {
       const randomStat = generateRandomStats();
       feedback[metric] = {
-        value: "Good",
+        value: randomStat.value,
         status: randomStat.status,
         target: "Optimal performance"
       };
@@ -166,8 +170,7 @@ export default function VideoAnalysis() {
   const [newXp, setNewXp] = useState(0);
 
   // Analyze video based on filename
-  const analysis = analyzeVideoByFilename(videoFile?.name || "", activityId || "push-ups");
-  const [analysisResult, setAnalysisResult] = useState(analysis);
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
 
   useEffect(() => {
     if (!videoFile || !activityName) {
@@ -175,9 +178,9 @@ export default function VideoAnalysis() {
       return;
     }
 
-    // Re-analyze when video file changes
-    const newAnalysis = analyzeVideoByFilename(videoFile.name, activityId || "push-ups");
-    setAnalysisResult(newAnalysis);
+    // Analyze based on filename
+    const analysis = analyzeVideoByFilename(videoFile.name, activityId || "push-ups");
+    setAnalysisResult(analysis);
 
     // Simulate analysis progress
     const interval = setInterval(() => {
@@ -186,10 +189,10 @@ export default function VideoAnalysis() {
           setIsAnalyzing(false);
           
           // Award rewards based on analysis
-          if (newAnalysis?.canProceed) {
-            const earnedCoins = newAnalysis.postureStatus === "excellent" ? 75 : 
-                              newAnalysis.postureStatus === "good" ? 50 : 25;
-            const earnedXp = newAnalysis.repCount * 2 + (earnedCoins / 2);
+          if (analysis?.canProceed) {
+            const earnedCoins = analysis.postureStatus === "excellent" ? 75 : 
+                              analysis.postureStatus === "good" ? 50 : 25;
+            const earnedXp = analysis.repCount * 2 + (earnedCoins / 2);
             
             setNewCoins(earnedCoins);
             setNewXp(earnedXp);
@@ -254,14 +257,14 @@ export default function VideoAnalysis() {
 
   const handleSubmitToSAI = () => {
     toast({
-      title: "Submitted to SAI",
+      title: "Submitted to SAI ✅",
       description: "Your analysis has been submitted for advanced processing.",
     });
   };
 
   const handleDownloadReport = () => {
     toast({
-      title: "Report Downloaded",
+      title: "Report Downloaded 📄",
       description: "Your analysis report has been downloaded successfully.",
     });
   };
@@ -271,11 +274,26 @@ export default function VideoAnalysis() {
   };
 
   if (!videoFile || !activityName) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <Card className="glass border-glass-border/50 max-w-md">
+          <CardContent className="p-8 text-center">
+            <AlertTriangle className="w-16 h-16 text-warning mx-auto mb-4" />
+            <h3 className="text-2xl font-bold mb-2">No Video Found</h3>
+            <p className="text-muted-foreground mb-4">
+              Please upload a video to analyze your performance.
+            </p>
+            <Button onClick={() => navigate("/assessment")} className="btn-gradient">
+              Go to Assessment
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 p-6">
+    <div className="min-h-screen bg-gradient-hero p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
@@ -289,7 +307,7 @@ export default function VideoAnalysis() {
 
         {/* Rewards Display */}
         <div className="flex justify-center gap-6">
-          <div className={`flex items-center gap-2 px-4 py-2 rounded-lg glass border border-glass-border/30 transition-all duration-500 ${showRewards ? 'animate-pulse' : ''}`}>
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-lg glass border border-glass-border/30 transition-all duration-500 ${showRewards ? 'animate-pulse-glow' : ''}`}>
             <Coins className="w-5 h-5 text-gamification-coin" />
             <span className="font-semibold">{coins}</span>
             {newCoins > 0 && (
@@ -298,7 +316,7 @@ export default function VideoAnalysis() {
               </Badge>
             )}
           </div>
-          <div className={`flex items-center gap-2 px-4 py-2 rounded-lg glass border border-glass-border/30 transition-all duration-500 ${showRewards ? 'animate-pulse' : ''}`}>
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-lg glass border border-glass-border/30 transition-all duration-500 ${showRewards ? 'animate-pulse-glow' : ''}`}>
             <Zap className="w-5 h-5 text-gamification-xp" />
             <span className="font-semibold">{xp} XP</span>
             {newXp > 0 && (
@@ -331,7 +349,7 @@ export default function VideoAnalysis() {
           <Card className="glass border-glass-border/50">
             <CardContent className="p-8 text-center space-y-4">
               <div className="w-16 h-16 mx-auto rounded-full bg-destructive/20 flex items-center justify-center">
-                <Trophy className="w-8 h-8 text-destructive animate-pulse" />
+                <AlertTriangle className="w-8 h-8 text-destructive animate-pulse" />
               </div>
               <h3 className="text-2xl font-bold text-destructive">{analysisResult.message}</h3>
               <p className="text-muted-foreground">
@@ -347,7 +365,7 @@ export default function VideoAnalysis() {
             </CardContent>
           </Card>
         ) : (
-          // Analysis Results
+          // Analysis Results - Main Layout
           <div className="grid lg:grid-cols-2 gap-6">
             {/* Left Side - Video Player */}
             <Card className="glass border-glass-border/50">
@@ -367,9 +385,25 @@ export default function VideoAnalysis() {
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleLoadedMetadata}
                   />
+                  
+                  {/* Analysis Overlays */}
+                  <div className="absolute top-4 left-4 bg-black/80 text-white px-3 py-1 rounded-lg text-sm">
+                    Analyzing: {activityName}
+                  </div>
+                  
+                  {analysisResult && (
+                    <div className={`absolute top-4 right-4 px-3 py-1 rounded-lg text-sm font-medium ${
+                      analysisResult.postureStatus === "excellent" ? "bg-success/90 text-white" :
+                      analysisResult.postureStatus === "good" ? "bg-success/90 text-white" :
+                      analysisResult.postureStatus === "warning" ? "bg-warning/90 text-black" :
+                      "bg-destructive/90 text-white"
+                    }`}>
+                      Posture: {analysisResult.feedback?.["Form Quality"]?.value || analysisResult.feedback?.["Form"]?.value || "Good"}
+                    </div>
+                  )}
                 </div>
 
-                {/* Controls */}
+                {/* Video Controls */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-center gap-4">
                     <Button
@@ -419,7 +453,7 @@ export default function VideoAnalysis() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {analysisResult?.metrics.map((metric) => {
+                  {analysisResult?.metrics.map((metric: string) => {
                     const feedback = analysisResult.feedback[metric];
                     return (
                       <div
@@ -428,7 +462,7 @@ export default function VideoAnalysis() {
                       >
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-semibold">{metric}</h4>
-                          <Badge className={getStatusColor(feedback.status)}>
+                          <Badge className={`${getStatusColor(feedback.status)} bg-transparent border-current`}>
                             {feedback.status}
                           </Badge>
                         </div>
@@ -437,12 +471,34 @@ export default function VideoAnalysis() {
                             {feedback.value}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            Target: {feedback.target}
+                            {feedback.target}
                           </p>
                         </div>
                       </div>
                     );
                   })}
+                </CardContent>
+              </Card>
+
+              {/* Overall Score */}
+              <Card className="glass border-glass-border/50">
+                <CardContent className="p-6 text-center">
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold">Overall Performance</h3>
+                    <div className={`text-4xl font-bold ${
+                      analysisResult?.postureStatus === "excellent" ? "text-success" :
+                      analysisResult?.postureStatus === "good" ? "text-success" :
+                      analysisResult?.postureStatus === "warning" ? "text-warning" :
+                      "text-destructive"
+                    }`}>
+                      {analysisResult?.postureStatus === "excellent" ? "95%" :
+                       analysisResult?.postureStatus === "good" ? "85%" :
+                       analysisResult?.postureStatus === "warning" ? "65%" : "45%"}
+                    </div>
+                    <p className="text-muted-foreground">
+                      {analysisResult?.repCount} reps completed with {analysisResult?.feedback?.["Form Quality"]?.value || analysisResult?.feedback?.["Form"]?.value || "good"} form
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             </div>
