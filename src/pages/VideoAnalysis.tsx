@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Play, Pause, SkipBack, SkipForward, Download, RefreshCw, Send, Trophy, Zap, Coins, Target, CheckCircle2, TrendingUp, Award, AlertTriangle, Upload, HelpCircle, Eye, X } from 'lucide-react';
