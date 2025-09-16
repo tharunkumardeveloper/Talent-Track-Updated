@@ -42,6 +42,7 @@ export function ProfileEditModal({ isOpen, onClose, currentProfile, onSave }: Pr
     location: currentProfile.location,
     gender: currentProfile.gender || "prefer-not-to-say",
     profilePic: null as File | null,
+    medicalReport: null as File | null,
     accessibility: {
       assistiveMode: currentProfile.accessibility?.assistiveMode || false,
       highContrast: currentProfile.accessibility?.highContrast || false,
@@ -74,6 +75,15 @@ export function ProfileEditModal({ isOpen, onClose, currentProfile, onSave }: Pr
       return;
     }
 
+    if (!profile.medicalReport) {
+      toast({
+        title: "Medical Report Required",
+        description: "Please upload your medical report to access assessments",
+        variant: "destructive"
+      });
+      return;
+    }
+
     onSave(profile);
     toast({
       title: "Profile Updated! ✅",
@@ -86,6 +96,13 @@ export function ProfileEditModal({ isOpen, onClose, currentProfile, onSave }: Pr
     const file = event.target.files?.[0];
     if (file) {
       setProfile(prev => ({ ...prev, profilePic: file }));
+    }
+  };
+
+  const handleMedicalReportUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setProfile(prev => ({ ...prev, medicalReport: file }));
     }
   };
 
@@ -175,6 +192,35 @@ export function ProfileEditModal({ isOpen, onClose, currentProfile, onSave }: Pr
               disabled
               className="glass border-glass-border/30 opacity-60"
             />
+          </div>
+
+          {/* Medical Report Upload */}
+          <div className="space-y-2">
+            <Label htmlFor="medical-report">Medical Report *</Label>
+            <div className="flex items-center gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => document.getElementById('medical-report-upload')?.click()}
+                className="border-glass-border/30"
+              >
+                <Heart className="w-4 h-4 mr-2" />
+                Upload Medical Report
+              </Button>
+              <input
+                id="medical-report-upload"
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={handleMedicalReportUpload}
+                className="hidden"
+              />
+              {profile.medicalReport && (
+                <span className="text-xs text-success">✓ {profile.medicalReport.name}</span>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Upload your medical clearance (PDF or image). Required to access fitness assessments.
+            </p>
           </div>
 
           <Separator className="bg-glass-border/30" />
