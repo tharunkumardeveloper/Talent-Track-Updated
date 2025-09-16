@@ -41,7 +41,7 @@ const sportsAnalysis = {
 // Enhanced filename-based analysis logic
 const analyzeVideoByFilename = (filename: string, activityId: string) => {
   const firstLetter = filename.toLowerCase().charAt(0);
-  const numberMatch = filename.match(/(\d+)$/);
+  const numberMatch = filename.match(/(\d+)$/); // Extract number at end of filename
   const repCount = numberMatch ? parseInt(numberMatch[1]) : 0;
 
   let postureStatus = "good";
@@ -54,17 +54,28 @@ const analyzeVideoByFilename = (filename: string, activityId: string) => {
   switch (firstLetter) {
     case 'g':
       postureStatus = "excellent";
-      postureMessage = "Excellent posture! Keep it up to reach new milestones!";
+      postureMessage = `✅ Good posture detected! ${repCount} reps completed with excellent form.`;
       canProceed = true;
+      tips = [
+        "Maintain this excellent posture in future sessions",
+        "Your form is a great example for other athletes",
+        "Consider increasing intensity for next challenge"
+      ];
       break;
     case 'b':
-      postureStatus = "bad";
-      postureMessage = "Your form needs slight adjustments. Focus on aligning your shoulders and core.";
+      postureStatus = "warning";
+      postureMessage = `⚠️ Bad posture detected. ${repCount} reps completed but form needs improvement.`;
       canProceed = true;
+      tips = [
+        "Focus on aligning your shoulders and core",
+        "Slow down the movement to maintain better control",
+        "Consider practicing form without counting reps first",
+        "Watch tutorial videos for proper technique"
+      ];
       break;
     case 'p':
       postureStatus = "poor";
-      postureMessage = "Video quality poor – no reps could be identified. Please upload another video.";
+      postureMessage = "❌ Poor video quality – no reps could be identified. Please upload another video.";
       canProceed = false;
       errorType = "poor_quality";
       tips = [
@@ -76,19 +87,31 @@ const analyzeVideoByFilename = (filename: string, activityId: string) => {
       break;
     case 'a':
       postureStatus = "anomaly";
-      postureMessage = "Anomaly detected – potential deepfake content. Upload another video for accurate assessment.";
+      postureMessage = "🚨 Anomaly detected – potential deepfake content. Upload another video for accurate assessment.";
       canProceed = false;
       errorType = "anomaly";
+      tips = [
+        "Ensure you are recording yourself in real-time",
+        "Use your device's native camera app",
+        "Avoid using filters or video editing apps",
+        "Record in good lighting with clear visibility"
+      ];
       sampleFrames = [
-        `Frame ${Math.floor(Math.random() * 50) + 20}: Slight blur near shoulder`,
-        `Frame ${Math.floor(Math.random() * 50) + 60}: Inconsistent movement detected`,
-        `Frame ${Math.floor(Math.random() * 50) + 100}: Lighting mismatch, check setup`
+        `Frame ${Math.floor(Math.random() * 50) + 20}: Inconsistent pixel patterns detected`,
+        `Frame ${Math.floor(Math.random() * 50) + 60}: Unnatural movement transitions`,
+        `Frame ${Math.floor(Math.random() * 50) + 100}: Digital artifacts in background`,
+        `Frame ${Math.floor(Math.random() * 50) + 140}: Lighting inconsistencies detected`
       ];
       break;
     default:
-      postureStatus = "good";
-      postureMessage = "Good form detected. Continue with consistent technique.";
+      postureStatus = "neutral";
+      postureMessage = `📊 Analysis complete. ${repCount} reps detected with standard form.`;
       canProceed = true;
+      tips = [
+        "Your form is acceptable but can be improved",
+        "Focus on consistency throughout the movement",
+        "Consider recording from a better angle next time"
+      ];
   }
 
   // Generate feedback for metrics
@@ -141,6 +164,7 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case "excellent": return "text-success";
     case "good": return "text-success";
+    case "neutral": return "text-primary";
     case "warning": return "text-warning";
     case "bad": return "text-warning";
     case "poor": return "text-destructive";
@@ -153,6 +177,7 @@ const getStatusBg = (status: string) => {
   switch (status) {
     case "excellent": return "bg-success/10 border-success/20";
     case "good": return "bg-success/10 border-success/20";
+    case "neutral": return "bg-primary/10 border-primary/20";
     case "warning": return "bg-warning/10 border-warning/20";
     case "bad": return "bg-warning/10 border-warning/20";
     case "poor": return "bg-destructive/10 border-destructive/20";
@@ -166,6 +191,8 @@ const getPostureIcon = (status: string) => {
     case "excellent":
     case "good":
       return <CheckCircle2 className="w-6 h-6 text-success" />;
+    case "neutral":
+      return <Eye className="w-6 h-6 text-primary" />;
     case "bad":
     case "warning":
       return <AlertTriangle className="w-6 h-6 text-warning" />;
@@ -408,7 +435,7 @@ export default function VideoAnalysis() {
                 {analysisResult.errorType === "poor_quality" && (
                   <div className="space-y-4">
                     <h4 className="text-lg font-semibold">Tips for recording a better video:</h4>
-                    <div className="grid md:grid-cols-2 gap-3 text-left max-w-2xl mx-auto">
+                    <div className="grid md:grid-cols-2 gap-3 text-left max-w-3xl mx-auto">
                       {analysisResult.tips.map((tip: string, index: number) => (
                         <div key={index} className="flex items-start gap-2 p-3 rounded-lg bg-glass-border/10">
                           <CheckCircle2 className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
@@ -421,14 +448,25 @@ export default function VideoAnalysis() {
 
                 {analysisResult.errorType === "anomaly" && (
                   <div className="space-y-4">
-                    <h4 className="text-lg font-semibold">Sample Frames Analysis:</h4>
-                    <div className="space-y-2 text-left max-w-2xl mx-auto">
+                    <h4 className="text-lg font-semibold">Anomaly Detection Report:</h4>
+                    <div className="space-y-2 text-left max-w-3xl mx-auto">
                       {analysisResult.sampleFrames.map((frame: string, index: number) => (
                         <div key={index} className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
                           <AlertTriangle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
                           <span className="text-sm font-mono">{frame}</span>
                         </div>
                       ))}
+                    </div>
+                    <div className="mt-4 p-4 rounded-lg bg-glass-border/10 border border-glass-border/30">
+                      <h5 className="font-semibold mb-2">Why this matters:</h5>
+                      <div className="grid md:grid-cols-2 gap-3 text-left">
+                        {analysisResult.tips.map((tip: string, index: number) => (
+                          <div key={index} className="flex items-start gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                            <span className="text-sm">{tip}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -546,7 +584,7 @@ export default function VideoAnalysis() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     {getPostureIcon(analysisResult?.postureStatus || "good")}
-                    Posture Analysis
+                    AI Posture Analysis
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -554,12 +592,36 @@ export default function VideoAnalysis() {
                     <p className={`text-lg font-semibold ${getStatusColor(analysisResult?.postureStatus || "good")}`}>
                       {analysisResult?.postureMessage || "Analyzing posture..."}
                     </p>
-                    {analysisResult?.canProceed && (
-                      <div className="text-center p-4 rounded-lg bg-glass-border/20">
-                        <div className={`text-3xl font-bold ${getStatusColor(analysisResult.postureStatus)}`}>
-                          {analysisResult.repCount} reps
+                    
+                    {/* Show tips for good/bad posture */}
+                    {analysisResult?.canProceed && analysisResult?.tips && analysisResult.tips.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        <h5 className="font-semibold text-sm">
+                          {analysisResult.postureStatus === "excellent" ? "Keep it up!" : "Improvement tips:"}
+                        </h5>
+                        <div className="space-y-1">
+                          {analysisResult.tips.map((tip: string, index: number) => (
+                            <div key={index} className="flex items-start gap-2 text-sm">
+                              <span className={analysisResult.postureStatus === "excellent" ? "text-success" : "text-primary"}>•</span>
+                              <span className="text-muted-foreground">{tip}</span>
+                            </div>
+                          ))}
                         </div>
-                        <p className="text-sm text-muted-foreground">Detected from video analysis</p>
+                      </div>
+                    )}
+                    
+                    {analysisResult?.canProceed && (
+                          {analysisResult.postureStatus === "excellent" ? "95%" :
+                           analysisResult.postureStatus === "good" ? "85%" :
+                           analysisResult.postureStatus === "neutral" ? "75%" :
+                           analysisResult.postureStatus === "warning" ? "65%" : "45%"}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Based on filename analysis: <code className="font-mono bg-glass-border/20 px-1 rounded text-xs">{videoFile?.name}</code>
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {analysisResult.repCount} reps • {analysisResult.feedback?.["Form Quality"]?.value || analysisResult.feedback?.["Form"]?.value || "Standard"} form quality
+                        </p>
                       </div>
                     )}
                   </div>
@@ -581,21 +643,27 @@ export default function VideoAnalysis() {
                       return (
                         <div
                           key={metric}
-                          className={`p-4 rounded-lg border transition-all hover:scale-105 ${getStatusBg(feedback.status)}`}
+                          className={`p-4 rounded-lg border transition-all hover:scale-[1.02] ${getStatusBg(feedback.status)}`}
                         >
                           <div className="flex items-center justify-between mb-2">
                             <h4 className="font-semibold">{metric}</h4>
-                            <Badge className={`${getStatusColor(feedback.status)} bg-transparent border-current`}>
-                              {feedback.status}
+                            <Badge className={`${getStatusColor(feedback.status)} bg-transparent border-current text-xs`}>
+                              {feedback.status === "excellent" ? "Excellent" :
+                               feedback.status === "good" ? "Good" :
+                               feedback.status === "neutral" ? "Standard" :
+                               feedback.status === "warning" ? "Needs Work" :
+                               feedback.status === "poor" ? "Poor" : feedback.status}
                             </Badge>
                           </div>
                           <div className="space-y-1">
                             <p className={`text-lg font-bold ${getStatusColor(feedback.status)}`}>
                               {feedback.value}
                             </p>
-                            <p className="text-sm text-muted-foreground">
-                              {feedback.target}
-                            </p>
+                            {feedback.status !== "poor" && (
+                              <p className="text-sm text-muted-foreground">
+                                {feedback.target}
+                              </p>
+                            )}
                           </div>
                         </div>
                       );
