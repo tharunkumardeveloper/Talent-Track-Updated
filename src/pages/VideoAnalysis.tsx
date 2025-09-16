@@ -1,1 +1,23 @@
-{"code":"rate-limited","message":"You have hit the rate limit. Please upgrade to keep chatting.","providerLimitHit":false,"isRetryable":true}
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { VideoAnalysisModal } from '../components/VideoAnalysisModal';
+
+export default function VideoAnalysis() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const { videoFile, activityName } = location.state || {};
+
+  const handleClose = () => {
+    navigate('/assessment');
+  };
+
+  return (
+    <VideoAnalysisModal
+      isOpen={true}
+      onClose={handleClose}
+      videoFile={videoFile}
+      activityName={activityName}
+    />
+  );
+}
