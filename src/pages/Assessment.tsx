@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowUp, Timer, Dumbbell, Heart, Upload, Camera, CheckCircle2, Clock, Zap, Trophy, TrendingUp, Medal, Coins, BarChart3, Target, Flame, Video, Play, Hand, Car } from "lucide-react";
+import { ArrowUp, Timer, Dumbbell, Heart, Upload, Camera, CheckCircle2, Clock, Zap, Trophy, TrendingUp, Medal, Coins, BarChart3, Target, Flame, Video, Play, Hand, Car, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -74,6 +74,30 @@ const activities = [
     color: "text-primary",
     instructions: "Run at steady pace for 12 minutes, covering as much distance as possible. Maintain consistent effort throughout. Walk if needed but try to minimize walking time.",
     videoTips: "Use front-facing camera • Capture running path • Record pace and form • Stable recording essential"
+  },
+  {
+    id: "pull-ups",
+    name: "Pull-Ups",
+    emoji: "🏋️‍♂️",
+    icon: Activity,
+    description: "Test upper body pulling strength and grip endurance",
+    duration: "2 minutes",
+    difficulty: "Advanced",
+    color: "text-primary",
+    instructions: "Hang from pull-up bar with arms fully extended. Pull your body up until chin clears the bar, then lower back down with control. Keep body straight throughout movement.",
+    videoTips: "Position camera to capture full body • Show complete range of motion • Ensure bar is visible • Record from side angle"
+  },
+  {
+    id: "knee-pushups",
+    name: "Knee Push-Ups",
+    emoji: "🧎‍♀️",
+    icon: Hand,
+    description: "Modified push-up exercise for building upper body strength",
+    duration: "2 minutes",
+    difficulty: "Beginner",
+    color: "text-gamification-bronze",
+    instructions: "Start in modified plank position with knees on ground. Lower chest toward ground, then push back up. Keep straight line from knees to head throughout movement.",
+    videoTips: "Position camera at side angle • Frame upper body and knees • Show full range of motion • Ensure stable surface"
   },
   {
     id: "assisted-chin-dip",
