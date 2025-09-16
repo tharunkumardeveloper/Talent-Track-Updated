@@ -611,11 +611,16 @@ export default function VideoAnalysis() {
                     )}
                     
                     {analysisResult?.canProceed && (
-                          {analysisResult.postureStatus === "excellent" ? "95%" :
-                           analysisResult.postureStatus === "good" ? "85%" :
-                           analysisResult.postureStatus === "neutral" ? "75%" :
-                           analysisResult.postureStatus === "warning" ? "65%" : "45%"}
-                        </div>
+                      <div className={`text-4xl font-bold ${getStatusColor(analysisResult.postureStatus)}`}>
+                        {analysisResult.postureStatus === "excellent" ? "95%" :
+                         analysisResult.postureStatus === "good" ? "85%" :
+                         analysisResult.postureStatus === "neutral" ? "75%" :
+                         analysisResult.postureStatus === "warning" ? "65%" : "45%"}
+                      </div>
+                    )}
+                    
+                    {analysisResult?.canProceed && (
+                      <div>
                         <p className="text-sm text-muted-foreground">
                           Based on filename analysis: <code className="font-mono bg-glass-border/20 px-1 rounded text-xs">{videoFile?.name}</code>
                         </p>
@@ -624,7 +629,6 @@ export default function VideoAnalysis() {
                         </p>
                       </div>
                     )}
-                  </div>
                 </CardContent>
               </Card>
 
