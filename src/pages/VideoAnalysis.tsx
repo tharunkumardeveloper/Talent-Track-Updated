@@ -445,38 +445,36 @@ export default function VideoAnalysis() {
                   })}
                 </CardContent>
               </Card>
-
-              {/* Action Buttons */}
-              <Card className="glass border-glass-border/50">
-                <CardContent className="p-6 space-y-4">
-                  <Button
-                    onClick={handleSubmitToSAI}
-                    className="w-full btn-gradient"
-                  >
-                    <Zap className="w-4 h-4 mr-2" />
-                    Submit to SAI
-                  </Button>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Button
-                      onClick={handleDownloadReport}
-                      variant="outline"
-                      className="border-glass-border/30"
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      Download Report
-                    </Button>
-                    <Button
-                      onClick={handleRedoVideo}
-                      variant="outline"
-                      className="border-glass-border/30"
-                    >
-                      <RotateCcw className="w-4 h-4 mr-2" />
-                      Redo Video
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
+          </div>
+        )}
+
+        {/* Action Buttons - Only show when analysis is complete and can proceed */}
+        {!isAnalyzing && analysisResult?.canProceed && (
+          <div className="flex justify-center gap-4">
+            <Button
+              onClick={handleSubmitToSAI}
+              className="btn-gradient px-8 py-3"
+            >
+              <Zap className="w-4 h-4 mr-2" />
+              Submit to SAI
+            </Button>
+            <Button
+              onClick={handleDownloadReport}
+              variant="outline"
+              className="border-glass-border/30 px-8 py-3"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download Report
+            </Button>
+            <Button
+              onClick={handleRedoVideo}
+              variant="outline"
+              className="border-glass-border/30 px-8 py-3"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Redo Video
+            </Button>
           </div>
         )}
       </div>
