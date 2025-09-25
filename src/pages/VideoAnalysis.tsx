@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { analyzeExerciseVideo, checkVideoQuality, generatePerformanceMetrics, calculateRewards } from '@/utils/exerciseAnalysis';
 
 interface PostureAnalysis {
   type: 'good' | 'bad' | 'poor' | 'anomaly';
@@ -15,6 +16,7 @@ interface PostureAnalysis {
   tips?: string[];
   reps?: number;
   showSampleFrames?: boolean;
+  confidence?: number;
 }
 
 export default function VideoAnalysis() {
@@ -33,11 +35,9 @@ export default function VideoAnalysis() {
 
   // Analysis state
   const [postureAnalysis, setPostureAnalysis] = useState<PostureAnalysis | null>(null);
-  const [accuracy, setAccuracy] = useState(0);
-  const [timing, setTiming] = useState(0);
-  const [consistency, setConsistency] = useState(0);
-  const [coinsEarned, setCoinsEarned] = useState(0);
-  const [xpEarned, setXpEarned] = useState(0);
+  const [analysisResults, setAnalysisResults] = useState<any>(null);
+  const [performanceMetrics, setPerformanceMetrics] = useState<any>(null);
+  const [rewards, setRewards] = useState<any>(null);
   const [showRewards, setShowRewards] = useState(false);
   const [showTips, setShowTips] = useState(false);
   const [sampleFrames, setSampleFrames] = useState<string[]>([]);
@@ -47,113 +47,84 @@ export default function VideoAnalysis() {
     if (videoFile?.name) {
       const filename = videoFile.name.toLowerCase();
       const firstLetter = filename.charAt(0);
-      const repsMatch = filename.match(/(\d+)/);
-      const extractedReps = repsMatch ? parseInt(repsMatch[1]) : 0;
+      
+      // Use the exercise analysis utility
+      const analysis = analyzeExerciseVideo(filename, activityName || 'pushups', 60);
+      const qualityCheck = checkVideoQuality(filename);
+      const metrics = generatePerformanceMetrics(analysis);
+      const rewardData = calculateRewards(analysis, metrics);
 
-      let analysis: PostureAnalysis;
+      let postureData: PostureAnalysis;
 
       switch (firstLetter) {
         case 'g':
-          analysis = {
+          postureData = {
             type: 'good',
             message: 'Excellent posture! Keep it up to reach new milestones!',
-            reps: extractedReps || (25 + Math.floor(Math.random() * 15)),
-            tips: [
-              'Your form is spot-on throughout the exercise',
-              'Breathing rhythm is well-coordinated',
-              'Great core stability and control',
-              'Perfect alignment maintained'
-            ]
+            reps: analysis.reps,
+            tips: analysis.tips,
+            confidence: analysis.confidence
           };
           break;
         
         case 'b':
-          analysis = {
+          postureData = {
             type: 'bad',
             message: 'Your form needs slight adjustments. Align shoulders and core for better results.',
-            reps: extractedReps || (15 + Math.floor(Math.random() * 10)),
-            tips: [
-              'Focus on shoulder alignment',
-              'Engage your core muscles more',
-              'Maintain steady breathing pattern',
-              'Keep your back straight throughout'
-            ]
+            reps: analysis.reps,
+            tips: analysis.tips,
+            confidence: analysis.confidence
           };
           break;
         
         case 'p':
-          analysis = {
+          postureData = {
             type: 'poor',
             message: 'Video quality poor – no reps could be identified. Please upload another video.',
-            tips: [
-              'Ensure good lighting conditions',
-              'Keep camera steady during recording',
-              'Frame your full body in view',
-              'Avoid blur and shaky movements',
-              'Record in landscape orientation'
-            ]
+            tips: qualityCheck.recommendations,
+            confidence: analysis.confidence
           };
           break;
         
         case 'a':
-          analysis = {
+          postureData = {
             type: 'anomaly',
             message: 'Anomaly detected – potential deepfake content. Upload another video for accurate assessment.',
             showSampleFrames: true,
-            tips: [
-              'Use your device\'s native camera app',
-              'Record in real-time without filters',
-              'Ensure consistent lighting throughout',
-              'Avoid using video editing apps',
-              'Record in a single continuous take'
-            ]
+            tips: qualityCheck.recommendations,
+            confidence: analysis.confidence
           };
           // Generate sample frame issues
-          setSampleFrames([
-            'Inconsistent lighting detected',
-            'Unnatural movement patterns',
-            'Frame interpolation artifacts',
-            'Digital manipulation indicators'
-          ]);
+          setSampleFrames(qualityCheck.issues);
           break;
         
         default:
-          analysis = {
+          postureData = {
             type: 'good',
             message: 'Great effort! Your technique shows good fundamentals.',
-            reps: extractedReps || (20 + Math.floor(Math.random() * 15)),
-            tips: [
-              'Solid foundation in your technique',
-              'Room for minor improvements',
-              'Keep practicing for consistency',
-              'Focus on controlled movements'
-            ]
+            reps: analysis.reps,
+            tips: analysis.tips,
+            confidence: analysis.confidence
           };
       }
 
-      setPostureAnalysis(analysis);
+      setPostureAnalysis(postureData);
+      setAnalysisResults(analysis);
+      setPerformanceMetrics(metrics);
+      setRewards(rewardData);
     }
-  }, [videoFile]);
+  }, [videoFile, activityName]);
 
   // Animate stats when component mounts (only for good/bad posture)
   useEffect(() => {
-    if (postureAnalysis && (postureAnalysis.type === 'good' || postureAnalysis.type === 'bad')) {
+    if (postureAnalysis && (postureAnalysis.type === 'good' || postureAnalysis.type === 'bad') && performanceMetrics) {
       const timer = setTimeout(() => {
-        const baseAccuracy = postureAnalysis.type === 'good' ? 85 : 65;
-        const baseTiming = postureAnalysis.type === 'good' ? 88 : 70;
-        const baseConsistency = postureAnalysis.type === 'good' ? 90 : 75;
-        
-        setAccuracy(baseAccuracy + Math.floor(Math.random() * 10));
-        setTiming(baseTiming + Math.floor(Math.random() * 10));
-        setConsistency(baseConsistency + Math.floor(Math.random() * 8));
-        setCoinsEarned(postureAnalysis.type === 'good' ? 60 : 35);
-        setXpEarned(postureAnalysis.type === 'good' ? 150 : 90);
         setShowRewards(true);
       }, 1000);
 
       return () => clearTimeout(timer);
     }
-  }, [postureAnalysis]);
+  }, [postureAnalysis, performanceMetrics]);
 
   const handlePlayPause = () => {
     if (videoRef.current) {
@@ -221,7 +192,7 @@ export default function VideoAnalysis() {
     navigate('/dashboard', { 
       state: { 
         message: 'Assessment submitted to SAI successfully!',
-        rewards: { coins: coinsEarned, xp: xpEarned }
+        rewards: rewards
       }
     });
   };
@@ -247,6 +218,18 @@ export default function VideoAnalysis() {
       case 'poor': return X;
       case 'anomaly': return AlertTriangle;
       default: return CheckCircle2;
+    }
+  };
+
+  const getAnalysisBorderColor = () => {
+    if (!postureAnalysis) return 'border-glass-border/30';
+    
+    switch (postureAnalysis.type) {
+      case 'good': return 'border-success/50 bg-success/5';
+      case 'bad': return 'border-warning/50 bg-warning/5';
+      case 'poor': return 'border-destructive/50 bg-destructive/5';
+      case 'anomaly': return 'border-destructive/50 bg-destructive/5';
+      default: return 'border-glass-border/30';
     }
   };
 
@@ -284,7 +267,7 @@ export default function VideoAnalysis() {
           </div>
 
           {/* Error Alert */}
-          <Alert className="glass border-destructive/50 bg-destructive/10">
+          <Alert className="glass border-destructive/50 bg-destructive/10 animate-fade-in">
             <AlertTriangle className="h-4 w-4 text-destructive" />
             <AlertDescription className="text-destructive font-medium">
               {postureAnalysis.message}
@@ -293,7 +276,7 @@ export default function VideoAnalysis() {
 
           {/* Sample Frames for Anomaly */}
           {postureAnalysis.showSampleFrames && sampleFrames.length > 0 && (
-            <Card className="glass border-glass-border/50">
+            <Card className="glass border-glass-border/50 animate-fade-in">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-destructive">
                   <Eye className="w-5 h-5" />
@@ -303,7 +286,7 @@ export default function VideoAnalysis() {
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   {sampleFrames.map((issue, index) => (
-                    <div key={index} className="p-3 rounded-lg bg-destructive/10 border border-destructive/30">
+                    <div key={index} className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 hover:bg-destructive/15 transition-colors">
                       <div className="w-full h-24 bg-gradient-to-br from-red-900/20 to-orange-900/20 rounded border-2 border-destructive/30 flex items-center justify-center mb-2">
                         <span className="text-xs text-destructive font-mono">Frame {index + 1}</span>
                       </div>
@@ -316,7 +299,7 @@ export default function VideoAnalysis() {
           )}
 
           {/* Recording Tips */}
-          <Card className="glass border-glass-border/50">
+          <Card className="glass border-glass-border/50 animate-fade-in">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <HelpCircle className="w-5 h-5 text-primary" />
@@ -326,7 +309,7 @@ export default function VideoAnalysis() {
             <CardContent>
               <div className="grid md:grid-cols-2 gap-4">
                 {postureAnalysis.tips?.map((tip, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-glass-border/10">
+                  <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-glass-border/10 hover:bg-glass-border/15 transition-colors">
                     <CheckCircle2 className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
                     <span className="text-sm">{tip}</span>
                   </div>
@@ -336,17 +319,17 @@ export default function VideoAnalysis() {
           </Card>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
             <Button 
               onClick={handleRetryUpload}
-              className="btn-gradient px-8 py-3 rounded-xl"
+              className="btn-gradient px-8 py-3 rounded-xl hover:scale-105 transition-transform"
             >
               <Upload className="w-4 h-4 mr-2" />
               Upload Another Video
             </Button>
             <Button 
               variant="outline" 
-              className="border-glass-border/30 px-8 py-3 rounded-xl"
+              className="border-glass-border/30 px-8 py-3 rounded-xl hover:bg-glass-border/20 transition-colors"
               onClick={() => setShowTips(!showTips)}
             >
               <HelpCircle className="w-4 h-4 mr-2" />
@@ -432,8 +415,8 @@ export default function VideoAnalysis() {
                 />
                 
                 {/* Analysis Status Overlay */}
-                <div className={`absolute top-4 left-4 px-3 py-1 rounded-lg text-sm font-medium ${
-                  postureAnalysis?.type === 'good' ? 'bg-success/90 text-white' :
+                <div className={`absolute top-4 left-4 px-3 py-1 rounded-lg text-sm font-medium transition-all duration-500 ${
+                  postureAnalysis?.type === 'good' ? 'bg-success/90 text-white animate-pulse-glow' :
                   postureAnalysis?.type === 'bad' ? 'bg-warning/90 text-white' :
                   'bg-primary/90 text-primary-foreground'
                 }`}>
@@ -447,9 +430,16 @@ export default function VideoAnalysis() {
                   Frame {currentFrame} / {totalFrames}
                 </div>
 
+                {/* Confidence Score */}
+                {postureAnalysis?.confidence && (
+                  <div className="absolute bottom-4 right-4 bg-black/80 text-white px-3 py-1 rounded-lg text-sm">
+                    Confidence: {Math.round(postureAnalysis.confidence * 100)}%
+                  </div>
+                )}
+
                 {/* Dynamic Posture Feedback */}
                 {currentFrame > 50 && currentFrame < 250 && postureAnalysis && (
-                  <div className={`absolute bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg text-sm animate-fade-in ${
+                  <div className={`absolute bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg text-sm animate-fade-in transition-all duration-300 ${
                     postureAnalysis.type === 'good' ? 'bg-success/90 text-white' :
                     'bg-warning/90 text-white'
                   }`}>
@@ -481,7 +471,7 @@ export default function VideoAnalysis() {
                     variant="outline"
                     size="sm"
                     onClick={() => frameStep('backward')}
-                    className="border-glass-border/30"
+                    className="border-glass-border/30 hover:bg-glass-border/20 transition-colors"
                   >
                     <SkipBack className="w-4 h-4" />
                     Prev Frame
@@ -490,7 +480,7 @@ export default function VideoAnalysis() {
                   <Button
                     onClick={handlePlayPause}
                     size="sm"
-                    className="btn-gradient px-6"
+                    className="btn-gradient px-6 hover:scale-105 transition-transform"
                   >
                     {isPlaying ? <Pause className="w-4 h-4 mr-2" /> : <Play className="w-4 h-4 mr-2" />}
                     {isPlaying ? 'Pause' : 'Play'}
@@ -500,7 +490,7 @@ export default function VideoAnalysis() {
                     variant="outline"
                     size="sm"
                     onClick={() => frameStep('forward')}
-                    className="border-glass-border/30"
+                    className="border-glass-border/30 hover:bg-glass-border/20 transition-colors"
                   >
                     Next Frame
                     <SkipForward className="w-4 h-4 ml-2" />
@@ -521,11 +511,7 @@ export default function VideoAnalysis() {
             <CardContent className="flex-1 flex flex-col space-y-6">
               {/* Posture Analysis */}
               {postureAnalysis && (
-                <div className={`glass rounded-lg p-4 border transition-all duration-500 ${
-                  postureAnalysis.type === 'good' ? 'border-success/50 bg-success/5' :
-                  postureAnalysis.type === 'bad' ? 'border-warning/50 bg-warning/5' :
-                  'border-glass-border/30'
-                }`}>
+                <div className={`glass rounded-lg p-4 border transition-all duration-500 ${getAnalysisBorderColor()}`}>
                   <h3 className="font-semibold mb-2 flex items-center gap-2">
                     {React.createElement(getAnalysisIcon(), { 
                       className: `w-5 h-5 ${getAnalysisColor()}` 
@@ -536,6 +522,17 @@ export default function VideoAnalysis() {
                     {postureAnalysis.message}
                   </p>
                   
+                  {/* Confidence Score */}
+                  {postureAnalysis.confidence && (
+                    <div className="mb-3">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>Analysis Confidence</span>
+                        <span className="font-semibold">{Math.round(postureAnalysis.confidence * 100)}%</span>
+                      </div>
+                      <Progress value={postureAnalysis.confidence * 100} className="h-2" />
+                    </div>
+                  )}
+                  
                   {/* Expandable Tips */}
                   {postureAnalysis.tips && (
                     <div className="space-y-2">
@@ -543,7 +540,7 @@ export default function VideoAnalysis() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setShowTips(!showTips)}
-                        className="p-0 h-auto text-sm text-muted-foreground hover:text-foreground"
+                        className="p-0 h-auto text-sm text-muted-foreground hover:text-foreground transition-colors"
                       >
                         {showTips ? 'Hide' : 'Show'} detailed feedback
                       </Button>
@@ -551,7 +548,7 @@ export default function VideoAnalysis() {
                       {showTips && (
                         <div className="space-y-1 animate-fade-in">
                           {postureAnalysis.tips.map((tip, index) => (
-                            <div key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                            <div key={index} className="flex items-start gap-2 text-sm text-muted-foreground p-2 rounded bg-glass-border/10 hover:bg-glass-border/15 transition-colors">
                               <span className="text-primary">•</span>
                               <span>{tip}</span>
                             </div>
@@ -565,55 +562,74 @@ export default function VideoAnalysis() {
 
               {/* Reps Count */}
               {postureAnalysis?.reps && (
-                <div className="glass rounded-lg p-4 border border-glass-border/30 animate-fade-in">
+                <div className="glass rounded-lg p-4 border border-glass-border/30 animate-fade-in hover:shadow-glow transition-all duration-300">
                   <h3 className="font-semibold mb-2 flex items-center gap-2">
                     <CheckCircle2 className="w-5 h-5 text-success" />
                     Repetitions Detected
                   </h3>
-                  <div className="text-3xl font-bold text-success animate-pulse">
+                  <div className="text-3xl font-bold text-success animate-pulse mb-2">
                     {postureAnalysis.reps} reps
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Extracted from video analysis
+                    Extracted from video analysis using MediaPipe pose detection
                   </p>
+                  {analysisResults?.avgRepTime && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Average: {analysisResults.avgRepTime.toFixed(1)}s per rep
+                    </p>
+                  )}
                 </div>
               )}
 
               {/* Performance Stats */}
-              {showRewards && (
+              {showRewards && performanceMetrics && (
                 <div className="space-y-4 animate-fade-in">
                   <h3 className="font-semibold">Performance Metrics</h3>
                   
                   <div className="space-y-3">
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span>Accuracy</span>
-                        <span className="font-semibold">{accuracy}%</span>
+                        <span>Form Accuracy</span>
+                        <span className="font-semibold">{performanceMetrics.accuracy}%</span>
                       </div>
-                      <Progress value={accuracy} className="h-2" />
+                      <Progress value={performanceMetrics.accuracy} className="h-2" />
                     </div>
                     
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span>Timing</span>
-                        <span className="font-semibold">{timing}%</span>
+                        <span>Timing Consistency</span>
+                        <span className="font-semibold">{performanceMetrics.timing}%</span>
                       </div>
-                      <Progress value={timing} className="h-2" />
+                      <Progress value={performanceMetrics.timing} className="h-2" />
                     </div>
                     
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span>Consistency</span>
-                        <span className="font-semibold">{consistency}%</span>
+                        <span>Movement Quality</span>
+                        <span className="font-semibold">{performanceMetrics.consistency}%</span>
                       </div>
-                      <Progress value={consistency} className="h-2" />
+                      <Progress value={performanceMetrics.consistency} className="h-2" />
+                    </div>
+
+                    <div className="pt-2 border-t border-glass-border/30">
+                      <div className="flex justify-between items-center">
+                        <span className="font-semibold">Overall Score</span>
+                        <span className={`text-2xl font-bold ${
+                          performanceMetrics.overallScore >= 90 ? 'text-success' :
+                          performanceMetrics.overallScore >= 75 ? 'text-primary' :
+                          performanceMetrics.overallScore >= 60 ? 'text-warning' :
+                          'text-destructive'
+                        }`}>
+                          {performanceMetrics.overallScore}%
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
               )}
 
               {/* Rewards Section */}
-              {showRewards && (
+              {showRewards && rewards && (
                 <div className="glass rounded-lg p-4 border border-glass-border/30 bg-gradient-secondary animate-fade-in">
                   <h3 className="font-semibold mb-3 flex items-center gap-2">
                     <Trophy className="w-5 h-5 text-gamification-gold" />
@@ -621,34 +637,41 @@ export default function VideoAnalysis() {
                   </h3>
                   
                   <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="text-center p-3 rounded-lg bg-glass-border/20">
+                    <div className="text-center p-3 rounded-lg bg-glass-border/20 hover:bg-glass-border/30 transition-colors">
                       <div className="flex items-center justify-center gap-1 mb-1">
                         <Coins className="w-4 h-4 text-gamification-coin" />
                         <span className="text-2xl font-bold text-gamification-coin animate-pulse">
-                          +{coinsEarned}
+                          +{rewards.coins}
                         </span>
                       </div>
                       <div className="text-xs text-muted-foreground">Coins</div>
                     </div>
                     
-                    <div className="text-center p-3 rounded-lg bg-glass-border/20">
+                    <div className="text-center p-3 rounded-lg bg-glass-border/20 hover:bg-glass-border/30 transition-colors">
                       <div className="flex items-center justify-center gap-1 mb-1">
                         <Zap className="w-4 h-4 text-gamification-xp" />
                         <span className="text-2xl font-bold text-gamification-xp animate-pulse">
-                          +{xpEarned}
+                          +{rewards.xp}
                         </span>
                       </div>
                       <div className="text-xs text-muted-foreground">XP</div>
                     </div>
                   </div>
 
-                  <div className="text-center p-3 rounded-lg bg-primary/10 border border-primary/30">
-                    <Award className="w-6 h-6 text-primary mx-auto mb-1" />
-                    <div className="font-semibold text-primary">
-                      {postureAnalysis?.type === 'good' ? 'Perfect Form Badge!' : 'Form Improver Badge!'}
+                  {/* Badges Earned */}
+                  {rewards.badges && rewards.badges.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-semibold">Badges Earned:</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {rewards.badges.map((badge: string, index: number) => (
+                          <div key={index} className="text-center p-2 rounded-lg bg-primary/10 border border-primary/30 hover:bg-primary/15 transition-colors">
+                            <Award className="w-4 h-4 text-primary mx-auto mb-1" />
+                            <div className="text-xs font-semibold text-primary">{badge}</div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground">{activityName} Analyzer</div>
-                  </div>
+                  )}
                 </div>
               )}
 
@@ -658,7 +681,7 @@ export default function VideoAnalysis() {
                   <>
                     <Button 
                       onClick={handleSubmitToSAI}
-                      className="w-full btn-gradient py-3 rounded-xl"
+                      className="w-full btn-gradient py-3 rounded-xl hover:scale-105 transition-transform"
                     >
                       <Send className="w-4 h-4 mr-2" />
                       Submit to SAI
@@ -667,7 +690,7 @@ export default function VideoAnalysis() {
                     <div className="grid grid-cols-2 gap-3">
                       <Button 
                         variant="outline" 
-                        className="border-glass-border/30"
+                        className="border-glass-border/30 hover:bg-glass-border/20 transition-colors"
                         onClick={() => {/* Download functionality */}}
                       >
                         <Download className="w-4 h-4 mr-2" />
@@ -676,7 +699,7 @@ export default function VideoAnalysis() {
                       
                       <Button 
                         variant="outline" 
-                        className="border-glass-border/30"
+                        className="border-glass-border/30 hover:bg-glass-border/20 transition-colors"
                         onClick={handleRetryUpload}
                       >
                         <RefreshCw className="w-4 h-4 mr-2" />

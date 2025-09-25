@@ -1,6 +1,0 @@
-mediapipe
-opencv-python
-numpy
-pandas
-pysimplegui
-yt-dlp

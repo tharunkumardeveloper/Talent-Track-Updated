@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { CheckCircle2, Loader2, Play, Pause } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { simulateFrameAnalysis } from "@/utils/exerciseAnalysis";
 
 interface AnalysisSimulationProps {
   onComplete: () => void;
@@ -31,6 +32,8 @@ export function AnalysisSimulation({ onComplete }: AnalysisSimulationProps) {
   const [frameNumber, setFrameNumber] = useState(0);
   const [isProcessingFrames, setIsProcessingFrames] = useState(false);
   const [detectedMovements, setDetectedMovements] = useState<string[]>([]);
+  const [currentPhase, setCurrentPhase] = useState('Starting position');
+  const [formFeedback, setFormFeedback] = useState('Analyzing...');
 
   useEffect(() => {
     // Start frame processing after initial upload
@@ -46,15 +49,23 @@ export function AnalysisSimulation({ onComplete }: AnalysisSimulationProps) {
           clearInterval(frameInterval);
           return 150;
         }
+        
+        // Update analysis feedback based on frame
+        const frameAnalysis = simulateFrameAnalysis(prev + 1, 150);
+        setCurrentPhase(frameAnalysis.currentPhase);
+        setFormFeedback(frameAnalysis.formFeedback);
+        
+        // Add new detected movements
+        frameAnalysis.detectedMovements.forEach(movement => {
+          if (!detectedMovements.includes(movement)) {
+            setDetectedMovements(prevMovements => [...prevMovements, movement]);
+          }
+        });
+        
         return prev + 1;
       });
     }, 40); // Fast frame processing
 
-    // Add detected movements at specific intervals
-    setTimeout(() => setDetectedMovements(prev => [...prev, "Body position detected"]), 1500);
-    setTimeout(() => setDetectedMovements(prev => [...prev, "Movement pattern identified"]), 2500);
-    setTimeout(() => setDetectedMovements(prev => [...prev, "Rep cycle detected"]), 3500);
-    setTimeout(() => setDetectedMovements(prev => [...prev, "Form assessment complete"]), 4500);
 
     // Cycle through loading texts
     const textInterval = setInterval(() => {
@@ -132,10 +143,10 @@ export function AnalysisSimulation({ onComplete }: AnalysisSimulationProps) {
                     </div>
                     
                     <div className="absolute bottom-2 left-2 text-xs text-yellow-400">
-                      🎯 Movement Detected
+                      🎯 {currentPhase}
                     </div>
                     <div className="absolute bottom-2 right-2 text-xs text-blue-400">
-                      📊 Analyzing Form
+                      📊 {formFeedback}
                     </div>
                   </div>
                   
@@ -144,7 +155,7 @@ export function AnalysisSimulation({ onComplete }: AnalysisSimulationProps) {
                     {detectedMovements.map((movement, index) => (
                       <div 
                         key={index} 
-                        className="text-xs text-green-400 animate-fade-in font-mono"
+                        className="text-xs text-green-400 animate-fade-in font-mono hover:text-green-300 transition-colors"
                       >
                         ✓ {movement}
                       </div>
