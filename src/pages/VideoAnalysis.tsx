@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Play, Pause, SkipBack, SkipForward, Download, RefreshCw, Send, Trophy, Zap, Coins, Target, CheckCircle2, TrendingUp, Award, AlertTriangle, Upload, HelpCircle, Eye, X } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Download, RefreshCw, Send, Trophy, Zap, Coins, Target, CircleCheck as CheckCircle2, TrendingUp, Award, TriangleAlert as AlertTriangle, Upload, CircleHelp as HelpCircle, Eye, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

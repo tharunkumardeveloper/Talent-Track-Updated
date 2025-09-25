@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CheckCircle2, Loader2, Play, Pause } from "lucide-react";
+import { CircleCheck as CheckCircle2, Loader as Loader2, Play, Pause } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { simulateFrameAnalysis } from "@/utils/exerciseAnalysis";
