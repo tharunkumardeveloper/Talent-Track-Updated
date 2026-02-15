@@ -1,0 +1,211 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Talent Track - Dark Purple Sports Platform Design System */
+
+@layer base {
+  :root {
+    /* Dark purple theme colors */
+    --background: 260 15% 8%;
+    --foreground: 270 20% 95%;
+    
+    /* Glass card colors */
+    --card: 260 25% 12%;
+    --card-foreground: 270 20% 95%;
+    --glass: 260 30% 15%;
+    --glass-border: 270 40% 25%;
+    
+    /* Primary purple brand colors */
+    --primary: 270 80% 65%;
+    --primary-dark: 270 85% 45%;
+    --primary-light: 280 70% 75%;
+    --primary-foreground: 260 15% 8%;
+    
+    /* Secondary accents */
+    --secondary: 260 25% 18%;
+    --secondary-foreground: 270 20% 90%;
+    
+    /* Muted elements */
+    --muted: 260 20% 15%;
+    --muted-foreground: 270 15% 65%;
+    
+    /* Accent colors */
+    --accent: 280 60% 50%;
+    --accent-light: 285 65% 65%;
+    --accent-foreground: 270 20% 95%;
+    
+    /* Status colors */
+    --success: 145 70% 50%;
+    --warning: 45 85% 60%;
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 270 20% 95%;
+    
+    /* Interactive elements */
+    --border: 260 25% 25%;
+    --input: 260 25% 18%;
+    --ring: 270 80% 65%;
+    
+    /* Sidebar colors */
+    --sidebar-background: 260 20% 10%;
+    --sidebar-foreground: 270 15% 75%;
+    --sidebar-primary: 270 80% 65%;
+    --sidebar-primary-foreground: 260 15% 8%;
+    --sidebar-accent: 260 25% 15%;
+    --sidebar-accent-foreground: 270 20% 85%;
+    --sidebar-border: 260 25% 20%;
+    --sidebar-ring: 270 80% 65%;
+    
+    /* Gamification colors */
+    --coin: 45 95% 60%;
+    --xp: 120 75% 55%;
+    --badge-bronze: 25 85% 60%;
+    --badge-silver: 0 0% 75%;
+    --badge-gold: 45 95% 65%;
+    --badge-diamond: 200 85% 70%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(270 85% 45%) 0%, hsl(280 70% 65%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(260 25% 15%) 0%, hsl(270 30% 20%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(260 15% 8%) 0%, hsl(270 25% 15%) 50%, hsl(280 35% 20%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(260 30% 15% / 0.8) 0%, hsla(270 35% 18% / 0.6) 100%);
+    
+    /* Shadows and effects */
+    --shadow-glass: 0 8px 32px hsla(260 15% 8% / 0.3);
+    --shadow-glow: 0 0 20px hsla(270 80% 65% / 0.3);
+    --shadow-button: 0 4px 15px hsla(270 80% 65% / 0.25);
+    
+    /* Animation values */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    background: var(--gradient-hero);
+    min-height: 100vh;
+  }
+  
+  /* Glass morphism base styles */
+  .glass {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--glass-border) / 0.2);
+    box-shadow: var(--shadow-glass);
+  }
+  
+  .glass-hover {
+    transition: var(--transition-smooth);
+  }
+  
+  .glass-hover:hover {
+    background: linear-gradient(135deg, hsla(260 35% 18% / 0.9) 0%, hsla(270 40% 22% / 0.7) 100%);
+    box-shadow: var(--shadow-glass), var(--shadow-glow);
+    transform: translateY(-2px);
+  }
+  
+  /* Glow effects */
+  .glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .glow-hover:hover {
+    box-shadow: var(--shadow-glow);
+    filter: brightness(1.1);
+  }
+  
+  /* Button styles */
+  .btn-gradient {
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-button);
+    transition: var(--transition-smooth);
+  }
+  
+  .btn-gradient:hover {
+    background: linear-gradient(135deg, hsl(270 90% 50%) 0%, hsl(280 75% 70%) 100%);
+    box-shadow: 0 6px 20px hsla(270 80% 65% / 0.4);
+    transform: translateY(-1px);
+  }
+  
+  /* Animations */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 2s linear infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: var(--shadow-glow); }
+    50% { box-shadow: 0 0 30px hsla(270 80% 65% / 0.5); }
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -200px 0; }
+    100% { background-position: calc(200px + 100%) 0; }
+  }
+  
+  /* Confetti animation */
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: var(--gradient-primary);
+    animation: confetti-fall 3s linear infinite;
+  }
+  
+  @keyframes confetti-fall {
+    to {
+      transform: translateY(100vh) rotate(360deg);
+    }
+  }
+  
+  /* XP Bar animation */
+  .xp-fill {
+    animation: xp-fill 1.5s ease-out forwards;
+  }
+  
+  @keyframes xp-fill {
+    0% { width: 0%; }
+    100% { width: var(--fill-width); }
+  }
+  
+  /* Notification bell shake */
+  .bell-shake:hover {
+    animation: bell-shake 0.5s ease-in-out;
+  }
+  
+  @keyframes bell-shake {
+    0%, 100% { transform: rotate(0deg); }
+    10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
+    20%, 40%, 60%, 80% { transform: rotate(10deg); }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
